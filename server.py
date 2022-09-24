@@ -1,10 +1,10 @@
+import linked_list
 from sqlite3 import Connection as SQLite3Connection
 from datetime import datetime
 from flask import Flask, request, jsonify
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
 from flask_sqlalchemy import SQLAlchemy
-
 
 # app
 app = Flask(__name__)
@@ -36,7 +36,7 @@ class User(db.Model):
     email = db.Column(db.String(50), nullable=False)
     address = db.Column(db.String(200))
     phone = db.Column(db.String(50))
-    posts = db.relationship("Blogpost")
+    posts = db.relationship("BlogPost")
 
 
 class BlogPost(db.Model):
@@ -52,17 +52,59 @@ class BlogPost(db.Model):
 
 @app.route("/user", methods=["POST"])
 def create_user():
-    pass
+    data = request.get_json()
+    new_user = User(
+        name=data["name"],
+        email=data["email"],
+        address=data["address"],
+        phone=data["phone"]
+    )
+    db.session.add(new_user)
+    db.session.commit()
+    return jsonify({"message": "User created"})
 
 
 @app.route("/user/descending_id", methods=["GET"])
 def get_all_users_descending():
-    pass
+    users = User.query.all()
+
+    if not users:
+        return jsonify({"message": "no user data found"})
+
+    all_users_ll = linked_list.LinkedList()
+    for user in users:
+        all_users_ll.insert_at_head(
+            {"id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "address": user.address,
+                "phone": user.phone
+             }
+        )
+
+    return jsonify(all_users_ll.to_list()), 200
 
 
 @app.route("/user/ascending_id", methods=["GET"])
 def get_all_users_ascending():
-    pass
+    users = User.query.all()
+
+    if not users:
+        return jsonify({"message": "no user data found"})
+
+    all_users_ll = linked_list.LinkedList()
+
+    for user in users:
+        all_users_ll.insert_at_end(
+            {
+                "id": user.id,
+                "name": user.name,
+                "email": user.email,
+                "address": user.address,
+                "phone": user.phone
+            }
+        )
+    return jsonify(all_users_ll.to_list())
 
 
 @app.route("/user/<user_id>", methods=["GET"])
