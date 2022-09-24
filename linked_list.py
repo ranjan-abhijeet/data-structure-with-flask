@@ -18,14 +18,13 @@ class LinkedList:
                 node = node.next_node
         return ll_array
 
-
     def print_ll(self):
         ll_string = ""
         node = self.head
         while node:
             ll_string += f" {str(node.data)} ->"
             node = node.next_node
-        
+
         ll_string += " None"
         print(ll_string)
 
@@ -43,3 +42,14 @@ class LinkedList:
             return
         self.tail.next_node = Node(data, None)
         self.tail = self.tail.next_node
+
+    def get_by_id(self, id):
+        if self.head is None:
+            return
+        node = self.head
+        while node:
+            if isinstance(node.data, dict):
+                if node.data['id'] is int(id):
+                    return node.data
+            node = node.next_node
+        return None
