@@ -1,6 +1,8 @@
+from turtle import title
 import linked_list
+import hash_table
 from sqlite3 import Connection as SQLite3Connection
-from datetime import datetime
+from datetime import date, datetime
 from flask import Flask, request, jsonify
 from sqlalchemy import event
 from sqlalchemy.engine import Engine
@@ -139,8 +141,28 @@ def delete_user(user_id):
 
 @app.route("/blog_post/<user_id>", methods=["POST"])
 def create_blog_post(user_id):
-    pass
+    data = request.get_json()
+    user = User.query.filter_by(id=user_id).first()
+    if not user:
+        return jsonify({"message": "unauthorized"}), 400
 
+    ht = hash_table.HashTable(10)
+
+    ht.add_key_value("title",data["title"])
+    ht.add_key_value("body", data["body"])
+    ht.add_key_value("date", now)
+    ht.add_key_value("user_id", user_id)
+    
+    new_blog = BlogPost(
+        title = ht.get_value("title"),
+        body = ht.get_value("body"),
+        date = ht.get_value("date"),
+        user_id = ht.get_value("user_id")
+    )
+    db.session.add(new_blog)
+    db.session.commit()
+
+    return jsonify({"message": "new blog post created"}), 201
 
 @app.route("/blog_post/<user_id>", methods=["GET"])
 def get_all_blog_post(user_id):
