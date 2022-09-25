@@ -26,9 +26,8 @@ def _set_sqlite_pragma(dbapi_connection, connection_record):
 db = SQLAlchemy(app)
 now = datetime.now()
 
+
 # models
-
-
 class User(db.Model):
     __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True, nullable=False)
@@ -47,9 +46,8 @@ class BlogPost(db.Model):
     date = db.Column(db.Date)
     user_id = db.Column(db.Integer, db.ForeignKey("user.id"), nullable=False)
 
+
 # routes
-
-
 @app.route("/user", methods=["POST"])
 def create_user():
     data = request.get_json()
