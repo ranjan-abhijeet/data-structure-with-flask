@@ -202,15 +202,5 @@ def get_one_blog_post(blog_post_id):
     return jsonify(post), 200
 
 
-@app.route("/blog_post/<user_id>", methods=["GET"])
-def get_all_blog_post(user_id):
-    pass
-
-
-@app.route("/blog_post/<blog_post_id>", methods=["DELETE"])
-def delete_blog_post(blog_post_id):
-    pass
-
-
 if __name__ == "__main__":
     app.run(debug=True)
